@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Conciso Map</title>
+        <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrJi7Rvj31r_uSHXYcNbiOATO3eYSVmrM&amp;libraries=places" 
+        type="text/javascript"></script>
+        <script type="text/javascript">
+            function geocode() {
+                document.getElementById('form:address').value = document.getElementById('autoComplete').value;
+                PF('geoMap').geocode(document.getElementById('form:address').value);
+            }
+
+            function historyList() {
+                document.getElementById('autoComplete').value = document.getElementById('form:country').value;
+                document.getElementById('form:address').value = document.getElementById('form:country').value;
+            }
+
+            function initialize() {
+                new google.maps.places.Autocomplete(
+                        (document.getElementById('autoComplete')), {
+                    types: ['geocode']
+                });
+            }
+            google.maps.event.addDomListener(window, 'load', initialize);
+        </script>
+
+    </h:head>
+    <body>
+        <h:form id="form">   
+            <div style = "width:100%;background-color: #A3BAD8 ">
+                <div style = "background-color:#ADC4E2	; width:100%" align="center">
+                    <h:panelGrid columns="4" style="margin-bottom:10px" cellpadding="5" >
+                        <p:outputLabel value="Address:" style="font-family: Purisa;color: white;font-weight: bold"/>
+                        <input id="autoComplete" type="text" size="35" class="ui-inputfield"  placeholder="Enter a location" autocomplete="off" />
+                        <p:commandButton value="GO" icon="ui-icon-search" onclick="geocode()" type="button" />
+
+                        <h:inputHidden id="address" />
+                    </h:panelGrid>
+                </div>
+                <div style = "background-color:#99B0CE; height:90%; width:25%; float:right;" align="center">
+                    <p:outputLabel  value="Search History" style="font-family: Purisa;color: white;font-weight: bold" /><br/>
+                    <h:selectOneListbox id="country" size="20" 
+                                        value="#{homeBean.country}"
+                                        onchange="historyList()" style="width: 80%;overflow-y: scroll;overflow-x: scroll" >
+                        <f:selectItems value="#{homeBean.countries}" id="countries" />	
+                    </h:selectOneListbox>
+
+                </div>
+                <div style = "background-color:#eee; height:90%; width:75%; float:left;" >
+
+                    <p:gmap id="geoGmap" widgetVar="geoMap" center="#{homeBean.centerGeoMap}" zoom="5" type="ROADMAP" model="#{homeBean.geoModel}" style="width:100%;height:100%">
+                        <p:ajax event="geocode" listener="#{homeBean.loadLocation}" update="@this country" />
+                    </p:gmap>
+                </div>
+                <div style = "background-color:#99B0CE; clear:both">
+                    <center>
+                        <p:outputLabel  value="Copyright © 2018" style="color: white;" />
+                    </center>
+                </div>
+            </div>
+        </h:form>
+    </body>
+</html>
